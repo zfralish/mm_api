@@ -1,0 +1,73 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile
+      target: prod
+    image: mm_api:${MM_API_VERSION:-latest}
+    restart: always
+    env_file:
+    - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      MM_API_HOST: 0.0.0.0
+      MM_API_DB_HOST: mm_api-db
+      MM_API_DB_PORT: 5432
+      MM_API_DB_USER: mm_api
+      MM_API_DB_PASS: mm_api
+      MM_API_DB_BASE: mm_api
+      MM_API_REDIS_HOST: mm_api-redis
+
+  db:
+    image: postgres:13.8-bullseye
+    hostname: mm_api-db
+    environment:
+      POSTGRES_PASSWORD: "mm_api"
+      POSTGRES_USER: "mm_api"
+      POSTGRES_DB: "mm_api"
+    volumes:
+    - mm_api-db-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: pg_isready -U mm_api
+      interval: 2s
+      timeout: 3s
+      retries: 40
+
+  migrator:
+    image: mm_api:${MM_API_VERSION:-latest}
+    restart: "no"
+    command: alembic upgrade head
+    environment:
+      MM_API_DB_HOST: mm_api-db
+      MM_API_DB_PORT: 5432
+      MM_API_DB_USER: mm_api
+      MM_API_DB_PASS: mm_api
+      MM_API_DB_BASE: mm_api
+    depends_on:
+      db:
+        condition: service_healthy
+
+  redis:
+    image: bitnami/redis:6.2.5
+    hostname: "mm_api-redis"
+    restart: always
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    healthcheck:
+      test: redis-cli ping
+      interval: 1s
+      timeout: 3s
+      retries: 50
+
+
+
+volumes:
+  mm_api-db-data:
+    name: mm_api-db-data
