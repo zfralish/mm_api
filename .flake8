@@ -11,6 +11,12 @@ ignore =
   ; Missing docstring in public module
   D100,
   ; Missing docstring in magic method
+  D101,
+  ; Missing docstring in public class
+  D104,
+  ; Missing docstring in public package
+  D102,
+  ; Missing docstring in public method
   D105,
   ; Missing docstring in __init__
   D107,
