@@ -2,8 +2,9 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from mew_mate_api.schemas.schema.weight import WeightRead
 from pydantic import BaseModel
+
+from mm_api.schema.weight import WeightRead
 
 
 class TrainingBase(BaseModel):

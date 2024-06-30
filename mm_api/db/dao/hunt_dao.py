@@ -15,7 +15,7 @@ class HuntDAO:
     def __init__(self, session: AsyncSession = Depends(get_db_session)):
         self.session = session
 
-    async def create_hunt_model(self, hunt: HuntBase) -> None:
+    async def create(self, hunt: HuntBase) -> None:
         self.session.add(HuntModel(**hunt.dict()))
 
     async def get_all_hunts(self, limit: int, offset: int) -> List[HuntModel]:

@@ -15,7 +15,7 @@ class TrainingDAO:
     def __init__(self, session: AsyncSession = Depends(get_db_session)):
         self.session = session
 
-    async def create_training_model(self, training: TrainingBase) -> None:
+    async def create(self, training: TrainingBase) -> None:
         self.session.add(TrainingModel(**training.dict()))
 
     async def get_all_trainings(self, limit: int, offset: int) -> List[TrainingModel]:

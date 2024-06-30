@@ -1,6 +1,7 @@
 from typing import Any, AsyncGenerator
 
 import pytest
+from faker import Faker
 from fakeredis import FakeServer
 from fakeredis.aioredis import FakeConnection
 from fastapi import FastAPI
@@ -15,9 +16,14 @@ from sqlalchemy.ext.asyncio import (
 
 from mm_api.db.dependencies import get_db_session
 from mm_api.db.utils import create_database, drop_database
+from mm_api.schema.bird import BirdRead
+from mm_api.schema.falconer import FalconerCreate, FalconerRead
 from mm_api.services.redis.dependency import get_redis_pool
 from mm_api.settings import settings
+from mm_api.tests.utils.birds import create_bird
 from mm_api.web.application import get_app
+
+fake = Faker()
 
 
 @pytest.fixture(scope="session")
@@ -130,3 +136,32 @@ async def client(
     """
     async with AsyncClient(app=fastapi_app, base_url="http://test") as ac:
         yield ac
+
+
+@pytest.fixture
+async def falconer(
+    fastapi_app: FastAPI,
+    client: AsyncClient,
+) -> AsyncGenerator[FalconerRead, None]:
+    url = fastapi_app.url_path_for("create_falconer")
+    test_falconer = FalconerCreate(
+        name="Zeke Fralish",
+        permit_class="general",
+        permit_number="456aaa",
+        id="testFalcoBoy",
+    )
+    response = await client.post(
+        url,
+        json=test_falconer.dict(),
+    )
+    yield FalconerRead(**response.json())
+
+
+@pytest.fixture
+async def bird(
+    fastapi_app: FastAPI,
+    client: AsyncClient,
+    falconer: FalconerRead,
+) -> AsyncGenerator[BirdRead, None]:
+    bird, resp = await create_bird(fastapi_app, client, falconer)
+    yield bird

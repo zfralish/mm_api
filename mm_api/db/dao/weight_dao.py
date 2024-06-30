@@ -15,7 +15,7 @@ class WeightDAO:
     def __init__(self, session: AsyncSession = Depends(get_db_session)):
         self.session = session
 
-    async def create_weight_model(self, weight: WeightCreate) -> None:
+    async def create(self, weight: WeightCreate) -> None:
         self.session.add(WeightModel(**weight.dict()))
 
     async def get_all_weights(self, limit: int, offset: int) -> List[WeightModel]:

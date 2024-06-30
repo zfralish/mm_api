@@ -15,7 +15,7 @@ class FeedingDAO:
     def __init__(self, session: AsyncSession = Depends(get_db_session)):
         self.session = session
 
-    async def create_feeding_model(self, feeding: FeedingBase) -> None:
+    async def create(self, feeding: FeedingBase) -> None:
         self.session.add(FeedingModel(**feeding.dict()))
 
     async def get_all_feedings(self, limit: int, offset: int) -> List[FeedingModel]:

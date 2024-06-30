@@ -7,14 +7,23 @@ docstring_style=sphinx
 
 ignore =
   ; Found `f` string
+  WPS432,
+  WPS221,
+  WPS111,
+  S311,
+  ; Standard pseudo-random generators are not suitable for security/cryptographic purposes.
   WPS305,
   ; Missing docstring in public module
+  WPS411,
+  ; Found empty module
   D100,
   ; Missing docstring in magic method
   D101,
   ; Missing docstring in public class
   D104,
   ; Missing docstring in public package
+  D103,
+  ; Missing docstring in public function
   D102,
   ; Missing docstring in public method
   D105,
@@ -25,6 +34,8 @@ ignore =
   ; Found class without a base class
   WPS306,
   ; Missing docstring in public nested class
+  WPS432,
+  ; Found magic number: 201
   D106,
   ; First line should be in imperative mood
   D401,

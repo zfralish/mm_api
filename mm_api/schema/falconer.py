@@ -1,8 +1,9 @@
 from datetime import datetime
 from typing import Optional
 
-from mew_mate_api.schemas.schema.bird import BirdRead
 from pydantic import BaseModel
+
+from mm_api.schema.bird import BirdRead
 
 
 class FalconerBase(BaseModel):
