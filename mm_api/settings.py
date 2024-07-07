@@ -3,6 +3,7 @@ from pathlib import Path
 from tempfile import gettempdir
 from typing import Optional
 
+import httpx
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from yarl import URL
 
@@ -33,7 +34,7 @@ class Settings(BaseSettings):
     # quantity of workers for uvicorn
     workers_count: int = 1
     # Enable uvicorn reloading
-    reload: bool = True
+    reload: bool = False
 
     # Current environment
     environment: str = "dev"
@@ -57,6 +58,36 @@ class Settings(BaseSettings):
     # Sentry's configuration.
     sentry_dsn: Optional[str] = None
     sentry_sample_rate: float = 1.0
+
+    # Clerk Config
+    clerk_api_key: str = "clerk_api"
+
+    # JWKS URL
+    jwks_url: str = "https://api.clerk.com/v1/jwks"
+
+    jwks: Optional[dict] = None  # type: ignore
+
+    def __init__(self, *args, **kwargs) -> None:  # type: ignore
+        super().__init__(*args, **kwargs)
+        self.fetch_jwks()
+
+    def fetch_jwks(self) -> None:
+        """
+        Fetch JWKS from the given URL.
+
+        :return: JWKS dictionary.
+        """
+        try:
+            self.jwks = httpx.get(
+                self.jwks_url,
+                headers={"Authorization": f"Bearer {self.clerk_api_key}"},
+            ).json()
+        except httpx.HTTPStatusError as e:
+            print(f"HTTP error occurred: {e}")
+            return
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return
 
     @property
     def db_url(self) -> URL:
@@ -94,8 +125,8 @@ class Settings(BaseSettings):
         )
 
     model_config = SettingsConfigDict(
-        env_file=".env",
-        env_prefix="MM_API_",
+        env_file="../.env",
+        env_prefix="MM_",
         env_file_encoding="utf-8",
     )
 

@@ -1,14 +1,9 @@
+# autoflake: skip_file
+
 """mm_api models."""
-import pkgutil
-from pathlib import Path
-
-
-def load_all_models() -> None:
-    """Load all models from this folder."""
-    package_dir = Path(__file__).resolve().parent
-    modules = pkgutil.walk_packages(
-        path=[str(package_dir)],
-        prefix="mm_api.db.models.",
-    )
-    for module in modules:
-        __import__(module.name)  # noqa: WPS421
+from mm_api.db.models.bird_model import BirdModel
+from mm_api.db.models.falconer_model import FalconerModel
+from mm_api.db.models.feeding_model import FeedingModel
+from mm_api.db.models.hunt_model import HuntModel
+from mm_api.db.models.training_model import TrainingModel
+from mm_api.db.models.weight_model import WeightModel

@@ -15,13 +15,16 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from mm_api.db.dependencies import get_db_session
+from mm_api.db.models import *  # noqa: WPS433
 from mm_api.db.utils import create_database, drop_database
 from mm_api.schema.bird import BirdRead
 from mm_api.schema.falconer import FalconerCreate, FalconerRead
 from mm_api.services.redis.dependency import get_redis_pool
 from mm_api.settings import settings
 from mm_api.tests.utils.birds import create_bird
+from mm_api.tests.utils.dependency_overrides import override_auth_dependency
 from mm_api.web.application import get_app
+from mm_api.web.dependencies import is_authenticated
 
 fake = Faker()
 
@@ -44,9 +47,6 @@ async def _engine() -> AsyncGenerator[AsyncEngine, None]:
     :yield: new engine.
     """
     from mm_api.db.meta import meta  # noqa: WPS433
-    from mm_api.db.models import load_all_models  # noqa: WPS433
-
-    load_all_models()
 
     await create_database()
 
@@ -139,6 +139,22 @@ async def client(
 
 
 @pytest.fixture
+async def authed_client(
+    fastapi_app: FastAPI,
+    anyio_backend: Any,
+) -> AsyncGenerator[AsyncClient, None]:
+    """
+    Fixture that creates client for requesting server.
+
+    :param fastapi_app: the application.
+    :yield: client for the app.
+    """
+    fastapi_app.dependency_overrides[is_authenticated] = override_auth_dependency
+    async with AsyncClient(app=fastapi_app, base_url="http://test") as ac:
+        yield ac
+
+
+@pytest.fixture
 async def falconer(
     fastapi_app: FastAPI,
     client: AsyncClient,
@@ -148,7 +164,7 @@ async def falconer(
         name="Zeke Fralish",
         permit_class="general",
         permit_number="456aaa",
-        id="testFalcoBoy",
+        id="user_2ifMt89Ay39uwvtLQUijf7OGCq5",
     )
     response = await client.post(
         url,

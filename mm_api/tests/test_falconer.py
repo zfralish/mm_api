@@ -35,12 +35,12 @@ async def test_create_falconer(
 @pytest.mark.anyio
 async def test_get_falconer(
     fastapi_app: FastAPI,
-    client: AsyncClient,
+    authed_client: AsyncClient,
     falconer: FalconerRead,
 ) -> None:
 
-    url = fastapi_app.url_path_for("get_falconer", falconer_id=falconer.id)
-    response = await client.get(url)
+    url = fastapi_app.url_path_for("get_falconer")
+    response = await authed_client.get(url)
     assert response.status_code == status.HTTP_200_OK
     response_data = response.json()
     assert response_data["id"] == falconer.id

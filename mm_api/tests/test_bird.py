@@ -41,16 +41,16 @@ async def test_get_bird(
 @pytest.mark.anyio
 async def test_get_bids_by_falconer_id(
     fastapi_app: FastAPI,
-    client: AsyncClient,
+    authed_client: AsyncClient,
     falconer: FalconerRead,
 ) -> None:
-    bird1, resp1 = await create_bird(fastapi_app, client, falconer)
+    bird1, resp1 = await create_bird(fastapi_app, authed_client, falconer)
     assert resp1.status_code == status.HTTP_201_CREATED, resp1.text
-    bird2, resp2 = await create_bird(fastapi_app, client, falconer)
+    bird2, resp2 = await create_bird(fastapi_app, authed_client, falconer)
     assert resp2.status_code == status.HTTP_201_CREATED, resp2.text
 
-    url = fastapi_app.url_path_for("get_birds_by_falconer_id", falconer_id=falconer.id)
-    response = await client.get(url)
+    url = fastapi_app.url_path_for("get_birds_by_falconer_id")
+    response = await authed_client.get(url)
     assert response.status_code == status.HTTP_200_OK
     response_data = response.json()
     assert len(response_data) == 2

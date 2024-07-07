@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio.engine import create_async_engine
 from sqlalchemy.future import Connection
 
 from mm_api.db.meta import meta
-from mm_api.db.models import load_all_models
 from mm_api.settings import settings
 
 # this is the Alembic Config object, which provides
@@ -14,7 +13,7 @@ from mm_api.settings import settings
 config = context.config
 
 
-load_all_models()
+# load_all_models()
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:

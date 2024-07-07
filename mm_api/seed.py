@@ -32,6 +32,7 @@ async def seed_data() -> None:
         async with AsyncSession(connection, expire_on_commit=False) as session:
             logger.info("Seeding data")
             falconer = create_falconer()
+            falconer.id = "user_2ifMt89Ay39uwvtLQUijf7OGCq5"
             logger.info("Creating falconer {}", falconer.id)
 
             falconer_dao = FalconerDAO(session=session)

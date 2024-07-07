@@ -5,7 +5,7 @@ from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from mm_api.db.dependencies import get_db_session
-from mm_api.db.models.falconer_model import FalconerModel
+from mm_api.db.models import FalconerModel
 from mm_api.schema.falconer import FalconerCreate, FalconerRead
 
 

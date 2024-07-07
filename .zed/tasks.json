@@ -1,0 +1,76 @@
+[
+  {
+    "label": "Run Api",
+    "command": "poetry run python -m mm_api",
+    //"args": [],
+    // Env overrides for the command, will be appended to the terminal's environment from the settings.
+    "env": {
+      "mm_clerk_api_key": "sk_test_7AC5SidUqPgqJacbUx06swSD4oEiMmG2Cgv7E1jvIF",
+      "mm_reload": "True"
+    },
+    // Current working directory to spawn the command into, defaults to current project root.
+    // Whether to use a new terminal tab or reuse the existing one to spawn the process, defaults to `false`.
+    "use_new_terminal": false,
+    // Whether to allow multiple instances of the same task to be run, or rather wait for the existing ones to finish, defaults to `false`.
+    "allow_concurrent_runs": true,
+    // What to do with the terminal pane and tab, after the command was started:
+    // * `always` — always show the terminal pane, add and focus the corresponding task's tab in it (default)
+    // * `always` — avoid changing current terminal pane focus, but still add/reuse the task's tab there
+    "reveal": "always"
+  },
+  {
+    "label": "Run Seed",
+    "command": "poetry run python mm_api/seed.py",
+    //"args": [],
+    // Env overrides for the command, will be appended to the terminal's environment from the settings.
+    "env": {
+      "mm_clerk_api_key": "sk_test_7AC5SidUqPgqJacbUx06swSD4oEiMmG2Cgv7E1jvIF",
+      "mm_reload": "True"
+    },
+    // Current working directory to spawn the command into, defaults to current project root.
+    // Whether to use a new terminal tab or reuse the existing one to spawn the process, defaults to `false`.
+    "use_new_terminal": false,
+    // Whether to allow multiple instances of the same task to be run, or rather wait for the existing ones to finish, defaults to `false`.
+    "allow_concurrent_runs": true,
+    // What to do with the terminal pane and tab, after the command was started:
+    // * `always` — always show the terminal pane, add and focus the corresponding task's tab in it (default)
+    // * `always` — avoid changing current terminal pane focus, but still add/reuse the task's tab there
+    "reveal": "always"
+  },
+  {
+    "label": "Test All",
+    "command": "poetry run pytest .",
+    //"args": [],
+    // Env overrides for the command, will be appended to the terminal's environment from the settings.
+    "env": {
+      "mm_clerk_api_key": "sk_test_7AC5SidUqPgqJacbUx06swSD4oEiMmG2Cgv7E1jvIF"
+    },
+    // Current working directory to spawn the command into, defaults to current project root.
+    // Whether to use a new terminal tab or reuse the existing one to spawn the process, defaults to `false`.
+    "use_new_terminal": false,
+    // Whether to allow multiple instances of the same task to be run, or rather wait for the existing ones to finish, defaults to `false`.
+    "allow_concurrent_runs": true,
+    // What to do with the terminal pane and tab, after the command was started:
+    // * `always` — always show the terminal pane, add and focus the corresponding task's tab in it (default)
+    // * `always` — avoid changing current terminal pane focus, but still add/reuse the task's tab there
+    "reveal": "always"
+  },
+  {
+    "label": "args",
+    "command": "echo 'hello'",
+    "args": ["world"],
+    // Env overrides for the command, will be appended to the terminal's environment from the settings.
+    "env": {
+      "mm_clerk_api_key": "sk_test_7AC5SidUqPgqJacbUx06swSD4oEiMmG2Cgv7E1jvIF"
+    },
+    // Current working directory to spawn the command into, defaults to current project root.
+    // Whether to use a new terminal tab or reuse the existing one to spawn the process, defaults to `false`.
+    "use_new_terminal": false,
+    // Whether to allow multiple instances of the same task to be run, or rather wait for the existing ones to finish, defaults to `false`.
+    "allow_concurrent_runs": true,
+    // What to do with the terminal pane and tab, after the command was started:
+    // * `always` — always show the terminal pane, add and focus the corresponding task's tab in it (default)
+    // * `always` — avoid changing current terminal pane focus, but still add/reuse the task's tab there
+    "reveal": "always"
+  }
+]
