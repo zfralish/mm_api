@@ -56,9 +56,8 @@
     "reveal": "always"
   },
   {
-    "label": "args",
-    "command": "echo 'hello'",
-    "args": ["world"],
+    "label": "Test File",
+    "command": "poetry run pytest -vv $ZED_RELATIVE_FILE",
     // Env overrides for the command, will be appended to the terminal's environment from the settings.
     "env": {
       "mm_clerk_api_key": "sk_test_7AC5SidUqPgqJacbUx06swSD4oEiMmG2Cgv7E1jvIF"
