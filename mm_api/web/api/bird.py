@@ -35,7 +35,6 @@ async def get_birds_by_falconer_id(
 @router.get("/{bird_id}/dashboard")
 async def get_dashboard_info(
     bird_id: str,
-    user_id: str = Depends(is_authenticated),
     bird_dao: BirdDAO = Depends(),
     weight_dao: WeightDAO = Depends(),
     training_dao: TrainingDAO = Depends(),
