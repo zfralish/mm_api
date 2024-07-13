@@ -47,6 +47,7 @@ class Settings(BaseSettings):
     db_pass: str = "mm_api"
     db_base: str = "mm_api"
     db_echo: bool = False
+    test_db_name: str = "test"
 
     # Variables for Redis
     redis_host: str = "mm_api-redis"
@@ -106,6 +107,22 @@ class Settings(BaseSettings):
         )
 
     @property
+    def db_url_test(self) -> URL:
+        """
+        Assemble database URL from settings.
+
+        :return: database URL.
+        """
+        return URL.build(
+            scheme="postgresql+asyncpg",
+            host=self.db_host,
+            port=self.db_port,
+            user=self.db_user,
+            password=self.db_pass,
+            path=f"/{self.test_db_name}",
+        )
+
+    @property
     def redis_url(self) -> URL:
         """
         Assemble REDIS URL from settings.
@@ -125,7 +142,7 @@ class Settings(BaseSettings):
         )
 
     model_config = SettingsConfigDict(
-        env_file="../.env",
+        env_file=".env",
         env_prefix="MM_",
         env_file_encoding="utf-8",
     )

@@ -71,3 +71,31 @@ async def test_bulk_create_feeding(
     url = fastapi_app.url_path_for("create_bulk_feeding")
     response = await client.post(url, json=jsonable_encoder(feedings))
     assert response.status_code == status.HTTP_201_CREATED, response.text
+
+
+@pytest.mark.anyio
+async def test_filter_feeding_by_date(
+    fastapi_app: FastAPI,
+    client: AsyncClient,
+    feeding: FeedingRead,
+) -> None:
+    url = fastapi_app.url_path_for("filter_feeding_by_date", bird_id=feeding.bird_id)
+    response = await client.get(url, params={"days": 31})
+    assert response.status_code == status.HTTP_200_OK
+    response_data = response.json()
+    assert len(response_data) == 1
+    assert response_data[0]["id"] == str(feeding.id)
+    assert response_data[0]["bird_id"] == str(feeding.bird_id)
+
+
+@pytest.mark.anyio
+async def test_filter_feeding_by_date_passed(
+    fastapi_app: FastAPI,
+    client: AsyncClient,
+    feeding: FeedingRead,
+) -> None:
+    url = fastapi_app.url_path_for("filter_feeding_by_date", bird_id=feeding.bird_id)
+    response = await client.get(url, params={"days": 1})
+    assert response.status_code == status.HTTP_200_OK
+    response_data = response.json()
+    assert len(response_data) == 0

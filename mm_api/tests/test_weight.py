@@ -65,3 +65,31 @@ async def test_get_weight(
     assert response.status_code == status.HTTP_200_OK
     response_data = response.json()
     assert response_data["id"] == str(weight.id)
+
+
+@pytest.mark.anyio
+async def test_filter_weight_by_date(
+    fastapi_app: FastAPI,
+    client: AsyncClient,
+    weight: WeightRead,
+) -> None:
+    url = fastapi_app.url_path_for("filter_weight_by_date", bird_id=weight.bird_id)
+    response = await client.get(url, params={"days": 31})
+    assert response.status_code == status.HTTP_200_OK
+    response_data = response.json()
+    assert len(response_data) == 1
+    assert response_data[0]["id"] == str(weight.id)
+    assert response_data[0]["bird_id"] == str(weight.bird_id)
+
+
+@pytest.mark.anyio
+async def test_filter_weight_by_date_passed(
+    fastapi_app: FastAPI,
+    client: AsyncClient,
+    weight: WeightRead,
+) -> None:
+    url = fastapi_app.url_path_for("filter_weight_by_date", bird_id=weight.bird_id)
+    response = await client.get(url, params={"days": 1})
+    assert response.status_code == status.HTTP_200_OK
+    response_data = response.json()
+    assert len(response_data) == 0

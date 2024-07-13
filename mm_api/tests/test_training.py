@@ -76,3 +76,31 @@ async def test_bulk_create_training(
     url = fastapi_app.url_path_for("create_bulk_training")
     response = await client.post(url, json=jsonable_encoder(trainings))
     assert response.status_code == status.HTTP_201_CREATED, response.text
+
+
+@pytest.mark.anyio
+async def test_filter_training_by_date(
+    fastapi_app: FastAPI,
+    client: AsyncClient,
+    training: TrainingRead,
+) -> None:
+    url = fastapi_app.url_path_for("filter_training_by_date", bird_id=training.bird_id)
+    response = await client.get(url, params={"days": 31})
+    assert response.status_code == status.HTTP_200_OK
+    response_data = response.json()
+    assert len(response_data) == 1
+    assert response_data[0]["id"] == str(training.id)
+    assert response_data[0]["bird_id"] == str(training.bird_id)
+
+
+@pytest.mark.anyio
+async def test_filter_training_by_date_passed(
+    fastapi_app: FastAPI,
+    client: AsyncClient,
+    training: TrainingRead,
+) -> None:
+    url = fastapi_app.url_path_for("filter_training_by_date", bird_id=training.bird_id)
+    response = await client.get(url, params={"days": 1})
+    assert response.status_code == status.HTTP_200_OK
+    response_data = response.json()
+    assert len(response_data) == 0

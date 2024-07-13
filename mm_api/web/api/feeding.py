@@ -31,3 +31,12 @@ async def create_bulk_feeding(
     feeding_dao: FeedingDAO = Depends(),
 ) -> None:
     return await feeding_dao.bulk_create(feedings)
+
+
+@router.get("/{bird_id}/filter-date")
+async def filter_feeding_by_date(
+    days: int,
+    bird_id: str,
+    feeding_dao: FeedingDAO = Depends(),
+) -> List[FeedingRead]:
+    return await feeding_dao.filter_by_bird_id_and_time(bird_id, days)

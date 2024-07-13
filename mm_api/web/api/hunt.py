@@ -31,3 +31,12 @@ async def create_bulk_hunt(
     hunt_dao: HuntDAO = Depends(),
 ) -> None:
     return await hunt_dao.bulk_create(hunts)
+
+
+@router.get("/{bird_id}/filter-date")
+async def filter_hunt_by_date(
+    days: int,
+    bird_id: str,
+    hunt_dao: HuntDAO = Depends(),
+) -> List[HuntRead]:
+    return await hunt_dao.filter_by_bird_id_and_time(bird_id, days)

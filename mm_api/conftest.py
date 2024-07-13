@@ -60,9 +60,9 @@ async def _engine() -> AsyncGenerator[AsyncEngine, None]:
     """
     from mm_api.db.meta import meta  # noqa: WPS433
 
-    await create_database()
+    await create_database(True)
 
-    engine = create_async_engine(str(settings.db_url))
+    engine = create_async_engine(str(settings.db_url_test))
     async with engine.begin() as conn:
         await conn.run_sync(meta.create_all)
 
@@ -70,7 +70,7 @@ async def _engine() -> AsyncGenerator[AsyncEngine, None]:
         yield engine
     finally:
         await engine.dispose()
-        await drop_database()
+        await drop_database(True)
 
 
 @pytest.fixture
@@ -205,7 +205,7 @@ async def weight(
         id=uuid.uuid4(),
         bird_id=bird.id,
         weight=1000,
-        w_time=datetime.datetime.now(),
+        w_time=datetime.datetime.now() - datetime.timedelta(days=1),
     )
     url = fastapi_app.url_path_for("create_weight")
     resp = await client.post(url, json=jsonable_encoder(weight))
@@ -242,7 +242,7 @@ async def feeding(
         start_weight=weight.id,
         end_weight=end_weight.id,
         bird_id=bird.id,
-        time=fake.date_time_this_year(),
+        time=fake.date_time_this_month(),
     )
     url = fastapi_app.url_path_for("create_feeding")
     response = await client.post(url, json=jsonable_encoder(feeding))

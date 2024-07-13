@@ -1,7 +1,8 @@
+from datetime import datetime, timedelta
 from typing import List, Optional
 
 from fastapi import Depends
-from sqlalchemy import select
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import Insert
 
@@ -28,15 +29,27 @@ class FeedingDAO:
 
         return list(raw_feedings.scalars().fetchall())
 
-    async def filter(
+    async def filter_by_bird_id_and_time(
         self,
-        uid: Optional[str] = None,
-    ) -> List[FeedingModel]:
+        b_id: Optional[str] = None,
+        days: Optional[int] = None,
+    ) -> List[FeedingRead]:
         query = select(FeedingModel)
-        if uid:
-            query = query.where(FeedingModel.id == uid)
+
+        conditions = []
+
+        if b_id:
+            conditions.append(FeedingModel.bird_id == b_id)
+
+        if days:
+            start_date = datetime.now() - timedelta(days=days)
+            conditions.append(FeedingModel.f_time >= start_date)
+
+        if conditions:
+            query = query.where(and_(*conditions))
+
         rows = await self.session.execute(query)
-        return list(rows.scalars().fetchall())
+        return [FeedingRead.from_orm(row) for row in rows.scalars().fetchall()]
 
     async def filter_by_bird_id(
         self,

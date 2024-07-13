@@ -31,3 +31,12 @@ async def create_bulk_training(
     training_dao: TrainingDAO = Depends(),
 ) -> None:
     return await training_dao.bulk_create(trainings)
+
+
+@router.get("/{bird_id}/filter-date")
+async def filter_training_by_date(
+    days: int,
+    bird_id: str,
+    training_dao: TrainingDAO = Depends(),
+) -> List[TrainingRead]:
+    return await training_dao.filter_by_bird_id_and_time(bird_id, days)

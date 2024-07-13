@@ -9,6 +9,8 @@ def decode_token(token: str) -> dict[str, str]:
 
     public_key = algorithms.RSAAlgorithm.from_jwk(settings.jwks["keys"][0])  # type: ignore
 
+    print(public_key)
+
     decoded_token = {}
     try:
         # Decode the token

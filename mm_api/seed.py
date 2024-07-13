@@ -1,7 +1,6 @@
 import asyncio
 from uuid import uuid4
 
-import numpy as np
 from faker import Faker
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
@@ -13,14 +12,9 @@ from mm_api.db.dao.feeding_dao import FeedingDAO
 from mm_api.db.dao.hunt_dao import HuntDAO
 from mm_api.db.dao.training_dao import TrainingDAO
 from mm_api.db.dao.weight_dao import WeightDAO
-from mm_api.schema.bird import BirdCreate
 from mm_api.schema.falconer import FalconerCreate
-from mm_api.schema.feeding import FeedingBase
-from mm_api.schema.hunt import HuntBase
-from mm_api.schema.training import TrainingBase
-from mm_api.schema.weight import WeightCreate
 from mm_api.settings import settings
-from mm_api.tests.utils.generations import create_hunts, create_trainings
+from mm_api.tests.utils.generations import create_bird, create_hunts, create_trainings
 
 fake = Faker()
 _engine = create_async_engine(str(settings.db_url))

@@ -1,7 +1,8 @@
+from datetime import datetime, timedelta
 from typing import List, Optional
 
 from fastapi import Depends
-from sqlalchemy import select
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import Insert
 
@@ -38,13 +39,25 @@ class HuntDAO:
         rows = await self.session.execute(query)
         return HuntRead.from_orm(rows.scalar())
 
-    async def filter_by_bird_id(
+    async def filter_by_bird_id_and_time(
         self,
         b_id: Optional[str] = None,
+        days: Optional[int] = None,
     ) -> List[HuntRead]:
         query = select(HuntModel)
+
+        conditions = []
+
         if b_id:
-            query = query.where(HuntModel.bird_id == b_id)
+            conditions.append(HuntModel.bird_id == b_id)
+
+        if days:
+            start_date = datetime.now() - timedelta(days=days)
+            conditions.append(HuntModel.start_time >= start_date)
+
+        if conditions:
+            query = query.where(and_(*conditions))
+
         rows = await self.session.execute(query)
         return [HuntRead.from_orm(row) for row in rows.scalars().fetchall()]
 
