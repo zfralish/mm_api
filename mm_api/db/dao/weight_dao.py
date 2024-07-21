@@ -2,13 +2,14 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 
 from fastapi import Depends
-from sqlalchemy import and_, select
+from sqlalchemy import and_, select, desc, func, text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import Insert
 
 from mm_api.db.dependencies import get_db_session
 from mm_api.db.models.weight_model import WeightModel
 from mm_api.schema.weight import WeightCreate, WeightRead
+from loguru import logger
 
 
 class WeightDAO:
@@ -42,24 +43,28 @@ class WeightDAO:
     async def filter_by_bird_id_and_time(
         self,
         b_id: Optional[str] = None,
-        days: Optional[int] = None,
+        days: Optional[int] = 30,
     ) -> List[WeightRead]:
-        query = select(WeightModel)
 
-        conditions = []
+        query = text(
+            """
+            WITH latest_entry AS (
+                SELECT w_time
+                FROM weights
+                WHERE bird_id = :bird_id
+                ORDER BY w_time DESC
+                LIMIT 1
+            )
+            SELECT w.*
+            FROM weights w, latest_entry
+            WHERE w.bird_id = :bird_id
+              AND w.w_time >= (latest_entry.w_time - make_interval(days := :days))
+            ORDER BY w.w_time DESC
+            """,
+        )
+        result = await self.session.execute(query, {"days": days, "bird_id": str(b_id)})
 
-        if b_id:
-            conditions.append(WeightModel.bird_id == b_id)
-
-        if days:
-            start_date = datetime.now() - timedelta(days=days)
-            conditions.append(WeightModel.w_time >= start_date)
-
-        if conditions:
-            query = query.where(and_(*conditions))
-
-        rows = await self.session.execute(query)
-        return [WeightRead.from_orm(row) for row in rows.scalars().fetchall()]
+        return [WeightRead.from_orm(row) for row in result.fetchall()]
 
     async def bulk_create(self, weight: List[WeightCreate]) -> None:
         self.session.add_all([WeightModel(**w.dict()) for w in weight])

@@ -35,8 +35,10 @@ async def create_bulk_weight(
 
 @router.get("/{bird_id}/filter-date")
 async def filter_weight_by_date(
-    days: int,
     bird_id: str,
+    days: int = 30,
     weight_dao: WeightDAO = Depends(),
 ) -> List[WeightRead]:
-    return await weight_dao.filter_by_bird_id_and_time(bird_id, days)
+    weights = await weight_dao.filter_by_bird_id_and_time(bird_id, days)
+    print(len(weights))
+    return weights
